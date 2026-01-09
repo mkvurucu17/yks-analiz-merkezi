@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YKS Analiz & AI Mentor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Giriş ve Kayıt Ekranı -->
+    <div id="auth-container" class="auth-page">
+        <div class="auth-box">
+            <h1>YKS Analiz</h1>
+            <input type="email" id="email" placeholder="E-posta">
+            <input type="password" id="password" placeholder="Şifre">
+            <div class="btn-group">
+                <button id="loginBtn">Giriş Yap</button>
+                <button id="signUpBtn">Kayıt Ol</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uygulama Ana Paneli (Giriş yapınca açılacak) -->
+    <div id="app-container" style="display: none;">
+        <nav class="sidebar">
+            <h2>📊 YKS Takip</h2>
+            <p id="userEmail" class="user-email"></p>
+            <button onclick="changeTab('dashboard')">📈 Panel</button>
+            <button onclick="changeTab('add-deneme')">✏️ Deneme Ekle</button>
+            <button onclick="changeTab('calisma-takip')">📚 Çalışma Takibi</button>
+            <button onclick="changeTab('deneme-gecmisi')">📋 Deneme Geçmişi</button>
+            <button id="logoutBtn">Çıkış Yap</button>
+        </nav>
+
+        <main class="content">
+            <section id="dashboard" class="tab-content">
+                <h2>Hoş Geldin! 👋</h2>
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3>Son TYT Neti</h3>
+                        <p class="net-value" id="lastTYTNet">-</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Son AYT Neti</h3>
+                        <p class="net-value" id="lastAYTNet">-</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Toplam Deneme</h3>
+                        <p class="net-value" id="totalDeneme">0</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Net Gelişim Grafiği</h3>
+                    <canvas id="netChart"></canvas>
+                </div>
+                <div class="critical-topics">
+                    <h3>🔴 En Çok Yanlış Yapılan Konular</h3>
+                    <div id="criticalTopicsList" class="topics-list">
+                        <p class="empty-state">Henüz yeterli veri yok.</p>
+                    </div>
+                </div>
+
+                <div class="brans-grafikleri">
+                    <h3>📊 Ders Bazlı Gelişim Grafikleri</h3>
+                    <div id="bransChartsContainer" class="charts-grid">
+                        <p class="empty-state">Henüz yeterli veri yok.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="add-deneme" class="tab-content" style="display:none;">
+                <h2>Yeni Deneme Kaydı</h2>
+                
+                <div class="form-container">
+                    <input type="text" id="denemeName" placeholder="Deneme Adı (Örn: Limit-1)">
+                    <input type="date" id="denemeDate">
+                    <select id="examType" onchange="updateMistakeArea()">
+                        <option value="TYT">TYT</option>
+                        <option value="AYT">AYT</option>
+                    </select>
+            
+                    <div class="net-inputs">
+                        <h3>Netlerini Gir (Doğru / Yanlış / Boş)</h3>
+                        <div id="netInputsContainer"></div>
+                    </div>
+            
+                    <div class="subject-search-area">
+                        <h3>Yanlış Yaptığın Konuları Ekle</h3>
+                        <select id="searchDersSecim" onchange="updateSubjectSearch()">
+                            <option value="">Ders Seç</option>
+                        </select>
+                        <div class="search-input-wrapper">
+                            <input type="text" id="subjectSearch" placeholder="Konu ara (Örn: Limit, Paragraf...)" oninput="filterSubjects()">
+                            <div id="searchSuggestions" class="suggestions"></div>
+                        </div>
+                        <div id="selectedSubjects" class="tags"></div>
+                    </div>
+            
+                    <button class="save-btn" onclick="saveDenemeData()">💾 Denemeyi Kaydet</button>
+                </div>
+            </section>
+
+            <section id="calisma-takip" class="tab-content" style="display:none;">
+                <h2>Çalışma Takibi</h2>
+                <div class="form-container">
+                    <input type="date" id="calismaDate">
+                    <select id="calismaDers">
+                        <option value="Matematik">Matematik</option>
+                        <option value="Türkçe">Türkçe</option>
+                        <option value="Geometri">Geometri</option>
+                        <option value="Fizik">Fizik</option>
+                        <option value="Kimya">Kimya</option>
+                        <option value="Biyoloji">Biyoloji</option>
+                        <option value="Tarih">Tarih</option>
+                        <option value="Coğrafya">Coğrafya</option>
+                        <option value="Edebiyat">Edebiyat</option>
+                    </select>
+                    <input type="text" id="calismaKonu" placeholder="Konu">
+                    <input type="number" id="calismaSoru" placeholder="Çözülen Soru Sayısı" min="0">
+                    <input type="number" id="calismaSure" placeholder="Çalışma Süresi (saat)" min="0" step="0.5">
+                    <button class="save-btn" onclick="saveCalismaData()">💾 Çalışmayı Kaydet</button>
+                </div>
+                <div class="calisma-reports">
+                    <div class="report-card">
+                        <h3>Bu Hafta</h3>
+                        <p id="haftalikSure">0 saat</p>
+                        <p id="haftalikSoru">0 soru</p>
+                    </div>
+                    <div class="report-card">
+                        <h3>Bu Ay</h3>
+                        <p id="aylikSure">0 saat</p>
+                        <p id="aylikSoru">0 soru</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="deneme-gecmisi" class="tab-content" style="display:none;">
+                <h2>📋 Deneme Geçmişi</h2>
+                
+                <div class="exam-type-tabs">
+                    <button class="exam-tab-btn active" onclick="showExamType('TYT')">TYT</button>
+                    <button class="exam-tab-btn" onclick="showExamType('AYT')">AYT</button>
+                </div>
+                
+                <div id="tytTableContainer" class="table-container">
+                    <h3>TYT Denemeleri</h3>
+                    <table id="tytTable" class="deneme-table">
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Deneme Adı</th>
+                                <th>Toplam Net</th>
+                                <th>Türkçe</th>
+                                <th>Matematik</th>
+                                <th>Geometri</th>
+                                <th>Fizik</th>
+                                <th>Kimya</th>
+                                <th>Biyoloji</th>
+                                <th>Tarih</th>
+                                <th>Coğrafya</th>
+                                <th>Felsefe</th>
+                                <th>Din Kültürü</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tytTableBody">
+                            <tr>
+                                <td colspan="14" class="empty-state">Yükleniyor...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="aytTableContainer" class="table-container" style="display:none;">
+                    <h3>AYT Denemeleri</h3>
+                    <table id="aytTable" class="deneme-table">
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Deneme Adı</th>
+                                <th>Toplam Net</th>
+                                <th>Matematik</th>
+                                <th>Geometri</th>
+                                <th>Fizik</th>
+                                <th>Kimya</th>
+                                <th>Biyoloji</th>
+                                <th>Edebiyat</th>
+                                <th>Tarih</th>
+                                <th>Coğrafya</th>
+                                <th>Felsefe</th>
+                                <th>Din Kültürü</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aytTableBody">
+                            <tr>
+                                <td colspan="14" class="empty-state">Yükleniyor...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Yanlış Konular Modal -->
+            <div id="yanlisKonularModal" class="modal" style="display:none;" onclick="if(event.target === this) closeYanlisKonularModal()">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="closeYanlisKonularModal()">&times;</span>
+                    <h2 id="modalDenemeAdi"></h2>
+                    <div id="modalYanlisKonular"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
