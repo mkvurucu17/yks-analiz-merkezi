@@ -3,7 +3,7 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, on
 import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: 'api',
+    apiKey: "AIzaSyDbc7m-zB3KmgKgsACKwDJFMUT3pQYbONs",
     authDomain: "yks-analiz-merkezi.firebaseapp.com",
     projectId: "yks-analiz-merkezi",
     storageBucket: "yks-analiz-merkezi.firebasestorage.app",
@@ -1710,3 +1710,4 @@ onAuthStateChanged(auth, (user) => {
       logoutBtn.onclick = () => signOut(auth);
 
   }
+
