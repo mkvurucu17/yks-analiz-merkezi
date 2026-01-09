@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YKS Analiz & AI Mentor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Giriş ve Kayıt Ekranı -->
+    <div id="auth-container" class="auth-page">
+        <div class="auth-box">
+            <h1>YKS Analiz</h1>
+            <input type="email" id="email" placeholder="E-posta">
+            <input type="password" id="password" placeholder="Şifre">
+            <div class="btn-group">
+                <button id="loginBtn">Giriş Yap</button>
+                <button id="signUpBtn">Kayıt Ol</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uygulama Ana Paneli (Giriş yapınca açılacak) -->
+    <div id="app-container" style="display: none;">
+        <nav class="sidebar">
+            <h2>📊 YKS Takip</h2>
+            <button onclick="changeTab('dashboard')">Panel</button>
+            <button onclick="changeTab('add-deneme')">Deneme Ekle</button>
+            <button onclick="changeTab('ai-chat')">AI Mentor</button>
+            <button id="logoutBtn">Çıkış</button>
+        </nav>
+
+        <main class="content">
+            <section id="dashboard" class="tab-content">
+                <h2>Hoş Geldin!</h2>
+                <div id="summary">Netlerin burada görünecek.</div>
+            </section>
+
+            <section id="add-deneme" class="tab-content" style="display:none;">
+                <h2>Yeni Deneme Kaydı</h2>
+                <div class="form-group">
+                    <input type="text" id="denemeName" placeholder="Deneme Adı">
+                    <select id="examType" onchange="loadSubjects()">
+                        <option value="TYT">TYT</option>
+                        <option value="AYT">AYT</option>
+                    </select>
+                </div>
+
+                <!-- SENİN İSTEDİĞİN ARAMA KUTUSU -->
+                <div class="subject-search-area">
+                    <label>Yanlış Yaptığın Konuyu Yaz/Seç:</label>
+                    <input type="text" id="subjectSearch" placeholder="Örn: tem..." oninput="filterSubjects()">
+                    <div id="searchSuggestions" class="suggestions"></div>
+                    <div id="selectedSubjects" class="tags"></div>
+                </div>
+
+                <button class="save-btn">Denemeyi Kaydet</button>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
